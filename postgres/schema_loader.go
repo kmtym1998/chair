@@ -1,0 +1,29 @@
+package postgres
+
+import (
+	"database/sql"
+
+	"github.com/kmtym1998/chair/generator"
+	"github.com/kmtym1998/chair/postgres/client"
+)
+
+type SchemaLoader struct {
+	DB *sql.DB
+}
+
+func New(dsn string) (*SchemaLoader, error) {
+	pgClient, err := client.New(client.Opts{
+		DataSourceName: dsn,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &SchemaLoader{
+		DB: pgClient.DB(),
+	}, nil
+}
+
+func (s *SchemaLoader) LoadSchema() ([]generator.Table, error) {
+	return nil, nil
+}
