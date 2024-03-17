@@ -11,7 +11,7 @@ type SchemaLoader struct {
 	DB *sql.DB
 }
 
-func New(dsn string) (*SchemaLoader, error) {
+func NewSchemaLoader(dsn string) (*SchemaLoader, error) {
 	pgClient, err := client.New(client.Opts{
 		DataSourceName: dsn,
 	})

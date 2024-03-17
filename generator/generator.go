@@ -2,17 +2,19 @@ package generator
 
 import (
 	"context"
+
+	"github.com/kmtym1998/chair/generator/config"
 )
 
 type Generator struct {
-	Config         *Config
-	DefaultMappers []TypeMapping
+	Config         *config.Config
+	DefaultMappers []config.TypeMapping
 	SchemaLoader   SchemaLoader
 }
 
 func New(
-	config *Config,
-	defaultMappers []TypeMapping,
+	config *config.Config,
+	defaultMappers []config.TypeMapping,
 	schemaLoader SchemaLoader,
 ) *Generator {
 	return &Generator{

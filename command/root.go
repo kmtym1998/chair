@@ -1,13 +1,13 @@
 package command
 
 import (
+	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
-	"github.com/kmtym1998/chair/generator"
+	"github.com/kmtym1998/chair/generator/config"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
 
 func NewRootCommand() *cobra.Command {
@@ -16,23 +16,24 @@ func NewRootCommand() *cobra.Command {
 		Long: "chair is a tool to generate Go struct from relational database schema",
 		Args: cobra.NoArgs,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			log.Println("PersistentPreRunE")
-
 			cfgFileName, err := cmd.Flags().GetString("config")
 			if err != nil {
 				return fmt.Errorf("failed to get config flag: %w", err)
 			}
 
-			log.Println("cfgFileName", cfgFileName)
-			cfgFile, err := os.ReadFile(cfgFileName)
+			cfg, err := config.Parse(cfgFileName)
 			if err != nil {
-				log.Fatalf("failed to read config file: %v", err)
+				if errors.Is(err, os.ErrNotExist) {
+					slog.Warn("config file not found")
+
+					return nil
+				}
+				return fmt.Errorf("failed to parse config file: %w", err)
 			}
 
-			var cfg generator.Config
-			if err := yaml.Unmarshal(cfgFile, &cfg); err != nil {
-				log.Fatalf("failed to unmarshal config: %v", err)
-			}
+			ctx := cmd.Context()
+			ctx = config.With(ctx, cfg)
+			cmd.SetContext(ctx)
 
 			return nil
 		},

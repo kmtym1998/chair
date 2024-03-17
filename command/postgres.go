@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/kmtym1998/chair/generator"
+	"github.com/kmtym1998/chair/generator/config"
 	"github.com/kmtym1998/chair/postgres"
 	"github.com/spf13/cobra"
 )
@@ -14,19 +15,31 @@ func NewPostgresCommand() *cobra.Command {
 		Long: "generate Go struct from PostgreSQL table schema",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			pgLoader, err := postgres.New("postgres://postgres:password@localhost:5432/postgres?sslmode=disable")
+			dsn, err := cmd.Flags().GetString("dsn")
+			if err != nil {
+				return fmt.Errorf("failed to get dsn flag: %w", err)
+			}
+
+			pgLoader, err := postgres.NewSchemaLoader(dsn)
 			if err != nil {
 				return fmt.Errorf("failed to create postgres client: %w", err)
 			}
 
+			cfg, _ := config.From(cmd.Context())
+
 			g := generator.New(
-				&generator.Config{},
-				[]generator.TypeMapping{},
+				cfg,
+				postgres.DefaultMappers(),
 				pgLoader,
 			)
 
 			return g.Run(cmd.Context())
 		},
+	}
+
+	postgresCmd.Flags().String("dsn", "", "PostgreSQL data source name")
+	if err := postgresCmd.MarkFlagRequired("dsn"); err != nil {
+		panic(err)
 	}
 
 	return postgresCmd
