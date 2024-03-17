@@ -9,13 +9,19 @@ import (
 )
 
 type Config struct {
-	Mappings []TypeMapping `yaml:"mappings"`
+	Mappings []TypeMapping  `yaml:"mappings"`
+	Postgres PostgresConfig `yaml:"postgres"`
 }
 
 type TypeMapping struct {
-	DBType string `yaml:"dbType"`
-	GoType string `yaml:"goType"`
-	GoPkg  string `yaml:"goPkg"`
+	DBType     string `yaml:"dbType"`
+	GoType     string `yaml:"goType"`
+	GoPkg      string `yaml:"goPkg"`
+	IsNullable bool   `yaml:"is_nullable"`
+}
+
+type PostgresConfig struct {
+	Schema string `yaml:"schema"`
 }
 
 func Parse(cfgFileName string) (*Config, error) {

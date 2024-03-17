@@ -20,12 +20,12 @@ func NewPostgresCommand() *cobra.Command {
 				return fmt.Errorf("failed to get dsn flag: %w", err)
 			}
 
-			pgLoader, err := postgres.NewSchemaLoader(dsn)
+			cfg, _ := config.From(cmd.Context())
+
+			pgLoader, err := postgres.NewSchemaLoader(dsn, cfg.Postgres.Schema)
 			if err != nil {
 				return fmt.Errorf("failed to create postgres client: %w", err)
 			}
-
-			cfg, _ := config.From(cmd.Context())
 
 			g := generator.New(
 				cfg,
