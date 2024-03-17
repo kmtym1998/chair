@@ -1,5 +1,7 @@
 package generator
 
+import "context"
+
 type Table struct {
 	Name    string
 	Columns []Column
@@ -11,5 +13,5 @@ type Column struct {
 }
 
 type SchemaLoader interface {
-	LoadSchema() ([]Table, error)
+	LoadSchema(ctx context.Context) ([]Table, error)
 }

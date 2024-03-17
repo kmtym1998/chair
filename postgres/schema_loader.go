@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/kmtym1998/chair/generator"
@@ -24,6 +25,6 @@ func NewSchemaLoader(dsn string) (*SchemaLoader, error) {
 	}, nil
 }
 
-func (s *SchemaLoader) LoadSchema() ([]generator.Table, error) {
+func (s *SchemaLoader) LoadSchema(ctx context.Context) ([]generator.Table, error) {
 	return nil, nil
 }
