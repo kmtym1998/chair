@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/cockroachdb/errors v1.11.1
 	github.com/jackc/pgx/v4 v4.18.3
+	github.com/kr/pretty v0.3.1
 	github.com/spf13/cobra v1.8.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -22,7 +23,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.3 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.14.0 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect

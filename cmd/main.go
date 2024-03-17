@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/kmtym1998/chair/command"
+
+	_ "github.com/kr/pretty" // for debugging
 )
 
 func main() {
