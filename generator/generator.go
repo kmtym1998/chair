@@ -26,6 +26,10 @@ func New(
 
 func (g *Generator) Run(ctx context.Context) error {
 	// Load schema
+	_, err := g.SchemaLoader.LoadSchema(ctx)
+	if err != nil {
+		return err
+	}
 
 	// Generate code
 
