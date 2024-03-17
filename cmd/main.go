@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	command "github.com/kmtym1998/chair/commands"
+	"github.com/kmtym1998/chair/command"
 )
 
 func main() {
