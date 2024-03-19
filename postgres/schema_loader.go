@@ -31,29 +31,33 @@ func NewSchemaLoader(dsn, schema string) (*SchemaLoader, error) {
 }
 
 func (s *SchemaLoader) LoadSchema(ctx context.Context) ([]generator.Table, error) {
-	pgClasses, err := s.listPGClass(ctx, s.schema)
+	tables, err := s.listTables(ctx, s.schema)
 	if err != nil {
 		return nil, err
 	}
+	pretty.Println(tables)
 
-	pretty.Println(pgClasses)
+	columns, err := s.listColumns(ctx, s.schema)
+	if err != nil {
+		return nil, err
+	}
+	pretty.Println(columns)
 
 	return nil, nil
 }
 
-// https://www.postgresql.org/docs/current/catalog-pg-class.html
-// https://www.postgresql.org/docs/current/catalog-pg-namespace.html
-type PGClass struct {
-	OID     int    `db:"oid"`
-	RelName string `db:"relname"`
-	RelType int    `db:"reltype"`
+type Table struct {
+	ID         int    `db:"relid"`
+	SchemaName string `db:"schemaname"`
+	TableName  string `db:"relname"`
+	Comment    string `db:"description"`
 }
 
-func (s *SchemaLoader) listPGClass(ctx context.Context, schema string) ([]PGClass, error) {
-	// TODO: get comment and columns  https://www.postgresql.jp/document/9.3/html/functions-info.html
-	const query = "SELECT c.oid, c.relname, c.reltype " +
-		"FROM pg_class c INNER JOIN pg_namespace ns ON c.relnamespace = ns.oid " +
-		"WHERE relkind = 'r' AND ns.nspname = $1;"
+func (s *SchemaLoader) listTables(ctx context.Context, schema string) ([]Table, error) {
+	const query = "SELECT relid, schemaname, relname, d.description " +
+		"FROM pg_stat_user_tables sut " +
+		"INNER JOIN pg_description d ON d.objsubid = 0 AND sut.relid = d.objoid " +
+		"WHERE sut.schemaname = $1;"
 	slog.Debug("executing query", "query", query, "schema", schema)
 
 	rows, err := s.DB.QueryContext(ctx, query, schema)
@@ -61,19 +65,82 @@ func (s *SchemaLoader) listPGClass(ctx context.Context, schema string) ([]PGClas
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 
-	var pgClass []PGClass
+	var tables []Table
 	for rows.Next() {
-		var class PGClass
+		var table Table
 		if err := rows.Scan(
-			&class.OID,
-			&class.RelName,
-			&class.RelType,
+			&table.ID,
+			&table.SchemaName,
+			&table.TableName,
+			&table.Comment,
 		); err != nil {
-			return nil, fmt.Errorf("failed to scan pg_class: %w", err)
+			return nil, fmt.Errorf("failed to scan tables: %w", err)
 		}
 
-		pgClass = append(pgClass, class)
+		tables = append(tables, table)
 	}
 
-	return pgClass, nil
+	return tables, nil
+}
+
+type Column struct {
+	SchemaName string         `db:"table_schema"`
+	TableName  string         `db:"table_name"`
+	ColumnName string         `db:"column_name"`
+	DataType   string         `db:"udt_name"`
+	Position   int            `db:"ordinal_position"`
+	Comment    sql.NullString `db:"description"`
+}
+
+func (s *SchemaLoader) listColumns(ctx context.Context, schema string) ([]Column, error) {
+	const query = `
+SELECT information_schema.columns.table_schema
+	,information_schema.columns.table_name
+	,information_schema.columns.column_name
+	,information_schema.columns.udt_name
+	,information_schema.columns.ordinal_position
+	,(
+		SELECT
+			description
+		FROM
+			pg_description
+		WHERE
+			pg_description.objoid = pg_stat_user_tables.relid
+			AND pg_description.objsubid = information_schema.columns.ordinal_position
+	) AS description
+FROM
+	pg_stat_user_tables
+	,information_schema.columns
+WHERE
+	pg_stat_user_tables.relname = information_schema.columns.table_name
+	AND pg_stat_user_tables.schemaname = $1
+ORDER BY
+	information_schema.columns.table_name ASC,
+	information_schema.columns.ordinal_position ASC
+;`
+	slog.Debug("executing query", "query", query, "schema", schema)
+
+	rows, err := s.DB.QueryContext(ctx, query, schema)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	var columns []Column
+	for rows.Next() {
+		var column Column
+		if err := rows.Scan(
+			&column.SchemaName,
+			&column.TableName,
+			&column.ColumnName,
+			&column.DataType,
+			&column.Position,
+			&column.Comment,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan columns: %w", err)
+		}
+
+		columns = append(columns, column)
+	}
+
+	return columns, nil
 }
