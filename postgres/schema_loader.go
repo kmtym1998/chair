@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"regexp"
+	"strings"
 
 	"github.com/kmtym1998/chair/generator"
 	"github.com/kmtym1998/chair/postgres/client"
@@ -47,10 +49,10 @@ func (s *SchemaLoader) LoadSchema(ctx context.Context) ([]generator.Table, error
 }
 
 type Table struct {
-	ID         int    `db:"relid"`
-	SchemaName string `db:"schemaname"`
-	TableName  string `db:"relname"`
-	Comment    string `db:"description"`
+	ID         int            `db:"relid"`
+	SchemaName string         `db:"schemaname"`
+	TableName  string         `db:"relname"`
+	Comment    sql.NullString `db:"description"`
 }
 
 func (s *SchemaLoader) listTables(ctx context.Context, schema string) ([]Table, error) {
@@ -94,12 +96,13 @@ type Column struct {
 
 func (s *SchemaLoader) listColumns(ctx context.Context, schema string) ([]Column, error) {
 	const query = `
-SELECT information_schema.columns.table_schema
-	,information_schema.columns.table_name
-	,information_schema.columns.column_name
-	,information_schema.columns.udt_name
-	,information_schema.columns.ordinal_position
-	,(
+SELECT
+	information_schema.columns.table_schema,
+	information_schema.columns.table_name,
+	information_schema.columns.column_name,
+	information_schema.columns.udt_name,
+	information_schema.columns.ordinal_position,
+	(
 		SELECT
 			description
 		FROM
@@ -109,8 +112,8 @@ SELECT information_schema.columns.table_schema
 			AND pg_description.objsubid = information_schema.columns.ordinal_position
 	) AS description
 FROM
-	pg_stat_user_tables
-	,information_schema.columns
+	pg_stat_user_tables,
+	information_schema.columns
 WHERE
 	pg_stat_user_tables.relname = information_schema.columns.table_name
 	AND pg_stat_user_tables.schemaname = $1
@@ -118,7 +121,7 @@ ORDER BY
 	information_schema.columns.table_name ASC,
 	information_schema.columns.ordinal_position ASC
 ;`
-	slog.Debug("executing query", "query", query, "schema", schema)
+	slog.Debug("executing query", "query", normalizeQuery(query), "schema", schema)
 
 	rows, err := s.DB.QueryContext(ctx, query, schema)
 	if err != nil {
@@ -143,4 +146,16 @@ ORDER BY
 	}
 
 	return columns, nil
+}
+
+func normalizeQuery(query string) string {
+	tabAndNewlineRegex := regexp.MustCompile("[\t\n]")
+	replaced := tabAndNewlineRegex.ReplaceAllString(query, " ")
+
+	spaceRegex := regexp.MustCompile(`\s+`)
+	replaced = spaceRegex.ReplaceAllString(replaced, " ")
+
+	replaced = strings.Trim(replaced, " ")
+
+	return replaced
 }
