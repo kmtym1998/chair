@@ -94,20 +94,21 @@ func (g *Generator) generateTableStructField(table Table, column Column, isFirst
 		fieldStmt = jen.Line().Comment(comment)
 	}
 
-	_, ok := g.findMappingByDBType(column.Type, column.IsNullable)
-	if ok {
-		// mapping.GoType で switch する。default は interface{} にする
-		// GoPkg が空文字列でない場合は、そのパッケージをインポートする必要がある
-	}
-
-	return fieldStmt.
+	fieldStmt.
 		Line().
 		Id(Field(column.Name).
 			ToUpperCamel().
-			ToSingular().
 			String(),
-		).
-		String()
+		)
+
+	mapping, ok := g.findMappingByDBType(column.Type, column.IsNullable)
+	if ok {
+		fieldStmt.Qual(mapping.GoPkg, mapping.GoType)
+	} else {
+		fieldStmt.Interface()
+	}
+
+	return fieldStmt
 }
 
 func (g *Generator) export(file *jen.File) error {

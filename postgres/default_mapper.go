@@ -62,43 +62,43 @@ func DefaultMappers() []config.TypeMapping {
 		// nullable numeric types
 		{
 			DBType:     "smallint",
-			GoType:     "sql.NullInt32",
+			GoType:     "NullInt32",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "integer",
-			GoType:     "sql.NullInt32",
+			GoType:     "NullInt32",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "bigint",
-			GoType:     "sql.NullInt64",
+			GoType:     "NullInt64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "decimal",
-			GoType:     "sql.NullFloat64",
+			GoType:     "NullFloat64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "numeric",
-			GoType:     "sql.NullFloat64",
+			GoType:     "NullFloat64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "real",
-			GoType:     "sql.NullFloat32",
+			GoType:     "NullFloat32",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "double precision",
-			GoType:     "sql.NullFloat64",
+			GoType:     "NullFloat64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
@@ -115,7 +115,7 @@ func DefaultMappers() []config.TypeMapping {
 		// nullable
 		{
 			DBType:     "money",
-			GoType:     "sql.NullFloat64",
+			GoType:     "NullFloat64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
@@ -157,37 +157,37 @@ func DefaultMappers() []config.TypeMapping {
 		// nullable
 		{
 			DBType:     "character",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "char",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "character varying",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "varchar",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "bpchar",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 		{
 			DBType:     "text",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
@@ -198,88 +198,88 @@ func DefaultMappers() []config.TypeMapping {
 		// non-nullable
 		{
 			DBType:     "timestamp",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "timestamp with time zone",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "timestamp without time zone",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "date",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "time",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "time with time zone",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		{
 			DBType:     "time without time zone",
-			GoType:     "time.Time",
+			GoType:     "Time",
 			GoPkg:      "time",
 			IsNullable: false,
 		},
 		// nullable
 		{
 			DBType:     "timestamp",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "timestamp with time zone",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "timestamp without time zone",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "date",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "time",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "time with time zone",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 		{
 			DBType:     "time without time zone",
-			GoType:     "sql.NullTime",
+			GoType:     "NullTime",
 			GoPkg:      "database/sql",
-			IsNullable: false,
+			IsNullable: true,
 		},
 	}
 
@@ -294,7 +294,7 @@ func DefaultMappers() []config.TypeMapping {
 		// nullable
 		{
 			DBType:     "boolean",
-			GoType:     "sql.NullBool",
+			GoType:     "NullBool",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
@@ -311,7 +311,7 @@ func DefaultMappers() []config.TypeMapping {
 		// nullable
 		{
 			DBType:     "uuid",
-			GoType:     "sql.NullString",
+			GoType:     "NullString",
 			IsNullable: true,
 		},
 	}
