@@ -38,7 +38,7 @@ func TestToUpperCamel(t *testing.T) {
 		t.Run(string(tt.field), func(t *testing.T) {
 			t.Parallel()
 
-			if got := tt.field.ToUpperCamel(); got != tt.want {
+			if got := tt.field.ToUpperCamel(); got.String() != tt.want {
 				t.Errorf("Field.ToUpperCamel() = %v, want %v", got, tt.want)
 			}
 		})
@@ -71,7 +71,7 @@ func TestToSingular(t *testing.T) {
 		t.Run(string(tt.field), func(t *testing.T) {
 			t.Parallel()
 
-			if got := tt.field.ToSingular(); got != tt.want {
+			if got := tt.field.ToSingular(); got.String() != tt.want {
 				t.Errorf("Field.ToSingular() = %v, want %v", got, tt.want)
 			}
 		})

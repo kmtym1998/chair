@@ -57,7 +57,7 @@ func (f Field) String() string {
 	return string(f)
 }
 
-func (f Field) ToUpperCamel() string {
+func (f Field) ToUpperCamel() Field {
 	if len(f) == 0 {
 		return ""
 	}
@@ -77,11 +77,11 @@ func (f Field) ToUpperCamel() string {
 		}
 	}
 
-	return strings.Join(results, "")
+	return Field(strings.Join(results, ""))
 }
 
-func (f Field) ToSingular() string {
+func (f Field) ToSingular() Field {
 	plc := pluralize.NewClient()
 
-	return plc.Singular(f.String())
+	return Field(plc.Singular(f.String()))
 }
