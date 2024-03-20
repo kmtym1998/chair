@@ -13,20 +13,24 @@ import (
 )
 
 type Generator struct {
-	config         *config.Config
-	defaultMappers []config.TypeMapping
-	schemaLoader   SchemaLoader
+	config       *config.Config
+	mappings     []config.TypeMapping
+	schemaLoader SchemaLoader
 }
 
 func New(
-	config *config.Config,
-	defaultMappers []config.TypeMapping,
+	cfg *config.Config,
+	defaultMappings []config.TypeMapping,
 	schemaLoader SchemaLoader,
 ) *Generator {
+	mappings := make([]config.TypeMapping, 0, len(defaultMappings)+len(cfg.Mappings))
+	mappings = append(mappings, cfg.Mappings...)
+	mappings = append(mappings, defaultMappings...)
+
 	return &Generator{
-		config:         config,
-		defaultMappers: defaultMappers,
-		schemaLoader:   schemaLoader,
+		config:       cfg,
+		schemaLoader: schemaLoader,
+		mappings:     mappings,
 	}
 }
 
@@ -90,6 +94,12 @@ func (g *Generator) generateTableStructField(table Table, column Column, isFirst
 		fieldStmt = jen.Line().Comment(comment)
 	}
 
+	_, ok := g.findMappingByDBType(column.Type, column.IsNullable)
+	if ok {
+		// mapping.GoType で switch する。default は interface{} にする
+		// GoPkg が空文字列でない場合は、そのパッケージをインポートする必要がある
+	}
+
 	return fieldStmt.
 		Line().
 		Id(Field(column.Name).
@@ -117,4 +127,16 @@ func (g *Generator) export(file *jen.File) error {
 	}
 
 	return file.Save(g.config.Output)
+}
+
+func (g *Generator) findMappingByDBType(dbType string, isNullable bool) (config.TypeMapping, bool) {
+	var mapping config.TypeMapping
+	for _, m := range g.mappings {
+		if m.DBType == dbType && m.IsNullable == isNullable {
+			mapping = m
+			return mapping, true
+		}
+	}
+
+	return mapping, false
 }
