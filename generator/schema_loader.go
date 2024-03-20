@@ -8,6 +8,7 @@ type Table struct {
 	Columns []Column
 }
 
+// TODO: Relation
 type Column struct {
 	Name       string
 	Comment    string

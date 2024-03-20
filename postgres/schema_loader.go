@@ -115,14 +115,17 @@ type Column struct {
 }
 
 func (s *SchemaLoader) listColumns(ctx context.Context, schema string) ([]Column, error) {
+	// TODO: Relation
 	const query = `
+WITH column_list AS (
 SELECT
-	information_schema.columns.table_schema,
-	information_schema.columns.table_name,
-	information_schema.columns.column_name,
-	information_schema.columns.data_type,
-	information_schema.columns.is_nullable,
-	information_schema.columns.ordinal_position,
+	c.table_schema || '_' || c.table_name || '_' || c.column_name AS column_key,
+	c.table_schema,
+	c.table_name,
+	c.column_name,
+	c.data_type,
+	c.is_nullable,
+	c.ordinal_position,
 	(
 		SELECT
 			description
@@ -130,17 +133,46 @@ SELECT
 			pg_description
 		WHERE
 			pg_description.objoid = pg_stat_user_tables.relid
-			AND pg_description.objsubid = information_schema.columns.ordinal_position
+			AND pg_description.objsubid = c.ordinal_position
 	) AS description
 FROM
 	pg_stat_user_tables,
-	information_schema.columns
+	information_schema.columns c
 WHERE
-	pg_stat_user_tables.relname = information_schema.columns.table_name
+	pg_stat_user_tables.relname = c.table_name
 	AND pg_stat_user_tables.schemaname = $1
+),
+relation_list AS (
+select
+	t.table_schema || '_' || t.table_name || '_' || k.column_name AS column_key,
+	t.table_schema AS table_schema,
+	k.table_name AS from_table_name,
+	k.column_name AS from_column_name,
+	c.table_name AS to_table_name,
+	c.column_name AS to_colmun_name
+from
+	information_schema.table_constraints as t,
+	information_schema.key_column_usage as k,
+	information_schema.constraint_column_usage as c
+where
+	t.constraint_type = 'FOREIGN KEY'
+	AND t.constraint_name = k.constraint_name
+	AND t.constraint_name = c.constraint_name
+)
+SELECT
+	col.table_schema,
+	col.table_name,
+	col.column_name,
+	col.data_type,
+	col.is_nullable,
+	col.ordinal_position,
+	col.description
+FROM
+	column_list AS col
+	LEFT JOIN relation_list AS rel ON col.column_key = rel.column_key
 ORDER BY
-	information_schema.columns.table_name ASC,
-	information_schema.columns.ordinal_position ASC
+	col.table_name ASC,
+	col.ordinal_position ASC
 ;`
 	slog.Debug("executing query", "query", normalizeQuery(query), "schema", schema)
 
