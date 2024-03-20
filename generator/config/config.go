@@ -9,6 +9,8 @@ import (
 )
 
 type Config struct {
+	PkgName  string         `yaml:"pkgName"`
+	Output   string         `yaml:"output"`
 	Mappings []TypeMapping  `yaml:"mappings"`
 	Postgres PostgresConfig `yaml:"postgres"`
 }
@@ -33,6 +35,14 @@ func Parse(cfgFileName string) (*Config, error) {
 	var cfg Config
 	if err := yaml.Unmarshal(cfgFile, &cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
+	}
+
+	if cfg.PkgName == "" {
+		cfg.PkgName = "model"
+	}
+
+	if cfg.Output == "" {
+		cfg.Output = "model_gen.go"
 	}
 
 	return &cfg, nil
