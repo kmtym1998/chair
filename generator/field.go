@@ -3,6 +3,7 @@ package generator
 import (
 	"strings"
 
+	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -77,4 +78,10 @@ func (f Field) ToUpperCamel() string {
 	}
 
 	return strings.Join(results, "")
+}
+
+func (f Field) ToSingular() string {
+	plc := pluralize.NewClient()
+
+	return plc.Singular(f.String())
 }

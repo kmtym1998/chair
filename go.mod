@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/cockroachdb/errors v1.11.1
 	github.com/dave/jennifer v1.7.0
+	github.com/gertd/go-pluralize v0.2.1
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/kr/pretty v0.3.1
 	github.com/lmittmann/tint v1.0.4
