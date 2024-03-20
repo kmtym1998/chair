@@ -108,7 +108,7 @@ type Column struct {
 	SchemaName string         `db:"table_schema"`
 	TableName  string         `db:"table_name"`
 	ColumnName string         `db:"column_name"`
-	DataType   string         `db:"udt_name"`
+	DataType   string         `db:"data_type"`
 	IsNullable string         `db:"is_nullable"`
 	Position   int            `db:"ordinal_position"`
 	Comment    sql.NullString `db:"description"`
@@ -120,7 +120,7 @@ SELECT
 	information_schema.columns.table_schema,
 	information_schema.columns.table_name,
 	information_schema.columns.column_name,
-	information_schema.columns.udt_name,
+	information_schema.columns.data_type,
 	information_schema.columns.is_nullable,
 	information_schema.columns.ordinal_position,
 	(

@@ -19,7 +19,7 @@ type TypeMapping struct {
 	DBType     string `yaml:"dbType"`
 	GoType     string `yaml:"goType"`
 	GoPkg      string `yaml:"goPkg"`
-	IsNullable bool   `yaml:"is_nullable"`
+	IsNullable bool   `yaml:"isNullable"`
 }
 
 type PostgresConfig struct {
