@@ -4,14 +4,17 @@ import "context"
 
 type Table struct {
 	Name    string
+	Comment string
 	Columns []Column
 }
 
 type Column struct {
-	Name string
-	Type string
+	Name     string
+	Comment  string
+	Type     string
+	OrderAsc int
 }
 
 type SchemaLoader interface {
-	LoadSchema(ctx context.Context) ([]Table, error)
+	LoadTableSchemas(ctx context.Context) ([]Table, error)
 }

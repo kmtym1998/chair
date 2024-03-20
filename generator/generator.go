@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/kmtym1998/chair/generator/config"
+	"github.com/kr/pretty"
 )
 
 type Generator struct {
@@ -26,10 +27,12 @@ func New(
 
 func (g *Generator) Run(ctx context.Context) error {
 	// Load schema
-	_, err := g.SchemaLoader.LoadSchema(ctx)
+	tables, err := g.SchemaLoader.LoadTableSchemas(ctx)
 	if err != nil {
 		return err
 	}
+
+	pretty.Println(tables)
 
 	// Generate code
 

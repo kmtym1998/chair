@@ -10,7 +10,6 @@ import (
 
 	"github.com/kmtym1998/chair/generator"
 	"github.com/kmtym1998/chair/postgres/client"
-	"github.com/kr/pretty"
 )
 
 type SchemaLoader struct {
@@ -32,20 +31,39 @@ func NewSchemaLoader(dsn, schema string) (*SchemaLoader, error) {
 	}, nil
 }
 
-func (s *SchemaLoader) LoadSchema(ctx context.Context) ([]generator.Table, error) {
+func (s *SchemaLoader) LoadTableSchemas(ctx context.Context) ([]generator.Table, error) {
 	tables, err := s.listTables(ctx, s.schema)
 	if err != nil {
 		return nil, err
 	}
-	pretty.Println(tables)
 
 	columns, err := s.listColumns(ctx, s.schema)
 	if err != nil {
 		return nil, err
 	}
-	pretty.Println(columns)
 
-	return nil, nil
+	tableSchemas := make([]generator.Table, len(tables))
+	for i, table := range tables {
+		columnSchemas := make([]generator.Column, 0, len(columns))
+		for _, column := range columns {
+			if table.TableName == column.TableName && table.SchemaName == column.SchemaName {
+				columnSchemas = append(columnSchemas, generator.Column{
+					Name:     column.ColumnName,
+					Comment:  column.Comment.String,
+					Type:     column.DataType,
+					OrderAsc: column.Position,
+				})
+			}
+		}
+
+		tableSchemas[i] = generator.Table{
+			Name:    table.TableName,
+			Comment: table.Comment.String,
+			Columns: columnSchemas,
+		}
+	}
+
+	return tableSchemas, nil
 }
 
 type Table struct {
