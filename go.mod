@@ -4,11 +4,14 @@ go 1.22.0
 
 require (
 	github.com/cockroachdb/errors v1.11.1
+	github.com/dave/jennifer v1.7.0
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/kr/pretty v0.3.1
 	github.com/lmittmann/tint v1.0.4
 	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
+	github.com/stoewer/go-strcase v1.3.0
+	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -32,5 +35,4 @@ require (
 	golang.org/x/crypto v0.20.0 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/sys v0.17.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
 )
