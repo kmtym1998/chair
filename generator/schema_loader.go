@@ -9,10 +9,11 @@ type Table struct {
 }
 
 type Column struct {
-	Name     string
-	Comment  string
-	Type     string
-	OrderAsc int
+	Name       string
+	Comment    string
+	Type       string
+	IsNullable bool
+	OrderAsc   int
 }
 
 type SchemaLoader interface {

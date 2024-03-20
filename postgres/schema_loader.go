@@ -48,10 +48,11 @@ func (s *SchemaLoader) LoadTableSchemas(ctx context.Context) ([]generator.Table,
 		for _, column := range columns {
 			if table.TableName == column.TableName && table.SchemaName == column.SchemaName {
 				columnSchemas = append(columnSchemas, generator.Column{
-					Name:     column.ColumnName,
-					Comment:  column.Comment.String,
-					Type:     column.DataType,
-					OrderAsc: column.Position,
+					Name:       column.ColumnName,
+					Comment:    column.Comment.String,
+					Type:       column.DataType,
+					IsNullable: strings.ToUpper(column.IsNullable) != "NO",
+					OrderAsc:   column.Position,
 				})
 			}
 		}
@@ -108,6 +109,7 @@ type Column struct {
 	TableName  string         `db:"table_name"`
 	ColumnName string         `db:"column_name"`
 	DataType   string         `db:"udt_name"`
+	IsNullable string         `db:"is_nullable"`
 	Position   int            `db:"ordinal_position"`
 	Comment    sql.NullString `db:"description"`
 }
@@ -119,6 +121,7 @@ SELECT
 	information_schema.columns.table_name,
 	information_schema.columns.column_name,
 	information_schema.columns.udt_name,
+	information_schema.columns.is_nullable,
 	information_schema.columns.ordinal_position,
 	(
 		SELECT
@@ -154,6 +157,7 @@ ORDER BY
 			&column.TableName,
 			&column.ColumnName,
 			&column.DataType,
+			&column.IsNullable,
 			&column.Position,
 			&column.Comment,
 		); err != nil {
