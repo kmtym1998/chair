@@ -65,11 +65,14 @@ func setUpLogger(cmd *cobra.Command) {
 	debug, _ := cmd.Flags().GetBool("verbose")
 
 	slog.SetLogLoggerLevel(slog.LevelDebug)
-	slog.New(tint.NewHandler(
-		os.Stdout,
-		&tint.Options{
-			Level:     lo.Ternary(debug, slog.LevelDebug, slog.LevelDebug),
-			AddSource: debug,
-		},
-	))
+	slog.SetDefault(
+		slog.New(tint.NewHandler(
+			os.Stdout,
+			&tint.Options{
+				Level:     lo.Ternary(debug, slog.LevelDebug, slog.LevelDebug),
+				AddSource: debug,
+				NoColor:   false,
+			},
+		)),
+	)
 }
