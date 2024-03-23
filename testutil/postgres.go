@@ -27,7 +27,9 @@ type TestDBOptions struct {
 func NewPostgreSQLContainer(t *testing.T, ver string, o TestDBOptions) (*PostgreSQLContainer, error) {
 	t.Helper()
 
-	c := &PostgreSQLContainer{}
+	c := &PostgreSQLContainer{
+		dbOpts: o,
+	}
 
 	pool, err := dockertest.NewPool("")
 	if err != nil {
