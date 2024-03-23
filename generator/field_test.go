@@ -33,6 +33,7 @@ func TestToUpperCamel(t *testing.T) {
 		{"userId", "UserID"},
 		{"UpperCamel", "UpperCamel"},
 		{"lowerCamel", "LowerCamel"},
+		{"", ""},
 	}
 	for _, tt := range tests {
 		t.Run(string(tt.field), func(t *testing.T) {
