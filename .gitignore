@@ -51,4 +51,4 @@ Temporary Items
 tmp
 .vscode
 .idea
-go.work.sum
+go.work*
