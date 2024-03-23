@@ -62,7 +62,14 @@ func (g *Generator) Run(ctx context.Context) error {
 func (g *Generator) generateTableStruct(table Table) *jen.Statement {
 	modelName := Field(table.Name).ToUpperCamel().ToSingular().String()
 
-	structStmt := jen.Commentf("%s: %s", table.Name, table.Comment).Line()
+	comment := func() string {
+		if table.Comment == "" {
+			return table.Name
+		}
+
+		return fmt.Sprintf("%s: %s", table.Name, table.Comment)
+	}()
+	structStmt := jen.Comment(comment).Line()
 
 	sort.SliceStable(table.Columns, func(i, j int) bool {
 		return table.Columns[i].OrderAsc < table.Columns[j].OrderAsc
