@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/kmtym1998/chair/generator"
-	"github.com/kmtym1998/chair/postgres/client"
 )
 
 type SchemaLoader struct {
@@ -17,18 +16,11 @@ type SchemaLoader struct {
 	schema string
 }
 
-func NewSchemaLoader(dsn, schema string) (*SchemaLoader, error) {
-	pgClient, err := client.New(client.Opts{
-		DataSourceName: dsn,
-	})
-	if err != nil {
-		return nil, err
-	}
-
+func NewSchemaLoader(db *sql.DB, schema string) *SchemaLoader {
 	return &SchemaLoader{
-		DB:     pgClient.DB(),
+		DB:     db,
 		schema: schema,
-	}, nil
+	}
 }
 
 func (s *SchemaLoader) LoadTableSchemas(ctx context.Context) ([]generator.Table, error) {

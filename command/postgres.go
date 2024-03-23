@@ -6,6 +6,7 @@ import (
 	"github.com/kmtym1998/chair/generator"
 	"github.com/kmtym1998/chair/generator/config"
 	"github.com/kmtym1998/chair/postgres"
+	"github.com/kmtym1998/chair/postgres/client"
 	"github.com/spf13/cobra"
 )
 
@@ -22,10 +23,14 @@ func NewPostgresCommand() *cobra.Command {
 
 			cfg, _ := config.From(cmd.Context())
 
-			pgLoader, err := postgres.NewSchemaLoader(dsn, cfg.Postgres.Schema)
+			pgClient, err := client.New(client.Opts{
+				DataSourceName: dsn,
+			})
 			if err != nil {
 				return fmt.Errorf("failed to create postgres client: %w", err)
 			}
+
+			pgLoader := postgres.NewSchemaLoader(pgClient.DB(), cfg.Postgres.Schema)
 
 			g := generator.New(
 				cfg,
