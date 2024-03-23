@@ -69,7 +69,7 @@ type Table struct {
 func (s *SchemaLoader) listTables(ctx context.Context, schema string) ([]Table, error) {
 	const query = "SELECT relid, schemaname, relname, d.description " +
 		"FROM pg_stat_user_tables sut " +
-		"INNER JOIN pg_description d ON d.objsubid = 0 AND sut.relid = d.objoid " +
+		"LEFT JOIN pg_description d ON d.objsubid = 0 AND sut.relid = d.objoid " +
 		"WHERE sut.schemaname = $1;"
 	slog.Debug("executing query", "query", query, "schema", schema)
 
