@@ -16,6 +16,9 @@ mappings:
     goType: 'Time'
     goPkg: 'github.com/guregu/null'
     isNullable: true
+  - dbType: 'uuid'
+    goType: 'UUID'
+    goPkg: 'github.com/google/uuid'
 `
 
 	var cfg Config

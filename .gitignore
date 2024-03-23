@@ -52,3 +52,4 @@ tmp
 .vscode
 .idea
 go.work*
+/generator/golden_testing/got/*

@@ -2,6 +2,7 @@ package pkgname
 
 import (
 	"database/sql"
+	uuid "github.com/google/uuid"
 	null "github.com/guregu/null"
 	"time"
 )
@@ -134,7 +135,7 @@ type UUIDType struct {
 	UUIDValueNullable sql.NullString
 
 	// uuid_types.uuid_value
-	UUIDValue string
+	UUIDValue uuid.UUID
 }
 
 // money_types:

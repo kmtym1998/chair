@@ -92,7 +92,7 @@ func DefaultMappers() []config.TypeMapping {
 		},
 		{
 			DBType:     "real",
-			GoType:     "NullFloat32",
+			GoType:     "NullFloat64",
 			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
@@ -312,6 +312,7 @@ func DefaultMappers() []config.TypeMapping {
 		{
 			DBType:     "uuid",
 			GoType:     "NullString",
+			GoPkg:      "database/sql",
 			IsNullable: true,
 		},
 	}
