@@ -104,10 +104,13 @@ type Column struct {
 	IsNullable string         `db:"is_nullable"`
 	Position   int            `db:"ordinal_position"`
 	Comment    sql.NullString `db:"description"`
+	FromTable  sql.NullString `db:"from_table_name"`
+	FromColumn sql.NullString `db:"from_column_name"`
+	ToTable    sql.NullString `db:"to_table_name"`
+	ToColumn   sql.NullString `db:"to_column_name"`
 }
 
 func (s *SchemaLoader) listColumns(ctx context.Context, schema string) ([]Column, error) {
-	// TODO: Relation
 	const query = `
 WITH column_list AS (
 SELECT
@@ -135,18 +138,18 @@ WHERE
 	AND pg_stat_user_tables.schemaname = $1
 ),
 relation_list AS (
-select
+SELECT
 	t.table_schema || '_' || t.table_name || '_' || k.column_name AS column_key,
 	t.table_schema AS table_schema,
 	k.table_name AS from_table_name,
 	k.column_name AS from_column_name,
 	c.table_name AS to_table_name,
-	c.column_name AS to_colmun_name
-from
+	c.column_name AS to_column_name
+FROM
 	information_schema.table_constraints as t,
 	information_schema.key_column_usage as k,
 	information_schema.constraint_column_usage as c
-where
+WHERE
 	t.constraint_type = 'FOREIGN KEY'
 	AND t.constraint_name = k.constraint_name
 	AND t.constraint_name = c.constraint_name
@@ -158,7 +161,11 @@ SELECT
 	col.data_type,
 	col.is_nullable,
 	col.ordinal_position,
-	col.description
+	col.description,
+	rel.from_table_name,
+	rel.from_column_name,
+	rel.to_table_name,
+	rel.to_column_name
 FROM
 	column_list AS col
 	LEFT JOIN relation_list AS rel ON col.column_key = rel.column_key
@@ -184,6 +191,10 @@ ORDER BY
 			&column.IsNullable,
 			&column.Position,
 			&column.Comment,
+			&column.FromTable,
+			&column.FromColumn,
+			&column.ToTable,
+			&column.ToColumn,
 		); err != nil {
 			return nil, fmt.Errorf("failed to scan columns: %w", err)
 		}
