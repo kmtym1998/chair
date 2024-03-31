@@ -8,13 +8,24 @@ type Table struct {
 	Columns []Column
 }
 
-// TODO: Relation
 type Column struct {
 	Name       string
 	Comment    string
 	Type       string
 	IsNullable bool
 	OrderAsc   int
+}
+
+type RelationType string
+
+const (
+	RelationTypeOneToOne  RelationType = "one_to_one"
+	RelationTypeOneToMany RelationType = "one_to_many"
+	RelationTypeManyToOne RelationType = "many_to_one"
+)
+
+func (r RelationType) String() string {
+	return string(r)
 }
 
 type SchemaLoader interface {
